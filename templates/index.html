@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blog Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="nav">
+    <a href="/posts">Home</a>
+    <a href="/create-post">Create Post</a>
+    <a href="/logout">Logout</a>
+</div>
+
+        <h1>Blog Platform</h1>
+
+        <p>
+            Welcome, {{ session.get('username', 'Guest') }}!
+        </p>
+
+        <a href="/create-post">
+            <button>Create New Post</button>
+        </a>
+
+        <hr>
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+                <div class="post">
+
+                    <h2>{{ post.title }}</h2>
+
+                    <p>{{ post.content }}</p>
+
+                    <small>
+                        Posted by {{ post.username }}
+                    </small>
+
+                    {% if session.get('user_id') == post.user_id %}
+
+    <p>
+        <a href="/edit-post/{{ post.id }}">
+            <button>Edit</button>
+        </a>
+
+        <form
+            method="POST"
+            action="/delete-post/{{ post.id }}"
+            style="display:inline;"
+            onsubmit="return confirm('Are you sure you want to delete this post?');"
+        >
+            <button type="submit">Delete</button>
+        </form>
+    </p>
+
+    <hr>
+
+<h3>Comments</h3>
+
+{% if post.comments %}
+
+    {% for comment in post.comments %}
+
+        <div class="comment">
+            <strong>{{ comment.username }}</strong>
+
+            <p>{{ comment.comment }}</p>
+
+            <small>{{ comment.created_at }}</small>
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>No comments yet.</p>
+
+{% endif %}
+
+<form method="POST" action="/comment/{{ post.id }}">
+
+    <textarea
+        name="comment"
+        placeholder="Write a comment..."
+        rows="3"
+        required
+    ></textarea>
+
+    <button type="submit">Add Comment</button>
+
+</form>
+
+{% endif %}
+
+                </div>
+
+                <hr>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No blog posts yet.</p>
+
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
